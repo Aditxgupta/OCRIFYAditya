@@ -1,6 +1,7 @@
 import os
-print("Current working directory:", os.getcwd())
+print("Working directory:", os.getcwd())
 print("Directory contents:", os.listdir())
+print("Templates directory contents:", os.listdir("templates"))
 import base64
 import uuid
 import io
