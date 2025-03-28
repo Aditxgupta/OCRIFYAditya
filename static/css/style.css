@@ -1,30 +1,337 @@
-{% extends "base.html" %}
-{% block title %}OCR Results{% endblock %}
+/* Basic Reset & Font */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
 
-{% block content %}
-<div class="results-area">
-    <h1>Extracted Content</h1> <!-- Changed title slightly -->
+body, html {
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: #1e1a2a; /* Dark purple background */
+    color: #e0e0e0; /* Light text color */
+    font-size: 14px;
+    line-height: 1.6;
+}
 
-    <!-- Controls remain the same, but Copy button JS will change -->
-    <div class="markdown-output-controls">
-         <button id="copy-btn" class="control-btn">Copy Markdown</button>
-         <a href="{{ url_for('download_markdown', file_id=file_id) }}" download="{{ download_filename }}" class="control-btn">Download .md</a>
-    </div>
+/* Main Layout */
+.container {
+    display: flex;
+    height: 100vh;
+}
 
-    <!-- Display Rendered HTML Content -->
-    <div class="markdown-output-container">
-         <!-- Use the 'safe' filter to render the generated HTML -->
-         {{ html_content_for_display | safe }}
-    </div>
+.sidebar {
+    width: 240px;
+    background-color: #2a273a; /* Slightly lighter sidebar */
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-right: 1px solid #3a364a;
+}
 
-    <!-- Hidden textarea to hold the raw markdown for the copy button -->
-    <textarea id="raw-markdown-for-copy" style="display:none;">{{ raw_markdown_for_copy }}</textarea>
+.main-content {
+    flex-grow: 1;
+    padding: 30px 40px;
+    overflow-y: auto; /* Allow scrolling if content overflows */
+    display: flex; /* Center content vertically */
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+}
 
-    <p class="info">Images extracted from the document are displayed above. Use buttons to copy/download original Markdown.</p>
-</div>
-{% endblock %}
+/* Sidebar Elements */
+.logo {
+    margin-bottom: 30px;
+    text-align: center;
+}
 
-{% block scripts %}
-<!-- Make sure script.js is loaded -->
-<script src="{{ url_for('static', filename='js/script.js') }}"></script>
-{% endblock %}
+.logo-img {
+    max-width: 180px;
+    height: auto;
+}
+
+/* Description */
+.description {
+    max-width: 800px;
+    margin: 0 auto 40px;
+    text-align: center;
+    color: #a0a0a0;
+    line-height: 1.6;
+}
+
+.description p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.description p:last-child {
+    margin-bottom: 0;
+}
+
+/* Social Links */
+.social-links {
+    margin-top: auto;
+    padding: 20px 0;
+    text-align: center;
+    border-top: 1px solid #3a364a;
+    width: 100%;
+}
+
+.social-links p {
+    color: #a0a0a0;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+}
+
+.social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}
+
+.social-icons a {
+    color: #8a3ffc;
+    font-size: 24px;
+    transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.social-icons a:hover {
+    color: #7a2ee8;
+    transform: translateY(-2px);
+}
+
+.new-chat-btn { /* Renamed for clarity */
+    display: block;
+    width: 100%;
+    background-color: #4a465a;
+    color: #e0e0e0;
+    border: none;
+    padding: 12px 15px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none; /* For anchor tag */
+    margin-bottom: 20px;
+}
+
+.new-chat-btn:hover {
+    background-color: #5a566a;
+}
+
+/* Main Content Area - Upload Page */
+.upload-area, .results-area {
+    width: 100%;
+    max-width: 800px; /* Limit content width */
+    text-align: center;
+    margin-top: 5vh; /* Push down from top a bit */
+}
+
+h1 {
+    font-size: 2.5em;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 15px;
+}
+
+.subtitle {
+    color: #a0a0a0;
+    margin-bottom: 40px;
+    font-size: 1.1em;
+}
+
+/* Placeholder Action Buttons */
+.action-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 50px;
+}
+
+.action-btn {
+    background-color: #3a364a;
+    color: #c0c0c0;
+    border: 1px solid #4a465a;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    cursor: not-allowed; /* Disabled look */
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.action-btn .icon {
+    font-size: 1.1em;
+}
+
+
+/* Upload Form */
+.upload-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.file-input-wrapper {
+    position: relative;
+    width: 80%;
+    max-width: 400px;
+}
+
+.file-input-label {
+    display: block;
+    padding: 12px 20px;
+    background-color: #2a273a;
+    border: 1px dashed #5a566a;
+    border-radius: 8px;
+    color: #a0a0a0;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.2s, border-color 0.2s;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.file-input-label:hover {
+    background-color: #3a364a;
+    border-color: #7a768a;
+}
+
+#file {
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0;
+    width: 100%;
+    height: 100%;
+    cursor: pointer;
+}
+
+.submit-btn {
+    background-color: #8a3ffc; /* Purple accent */
+    color: #fff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.submit-btn:hover {
+    background-color: #7a2ee8;
+}
+
+.submit-btn svg {
+    vertical-align: middle;
+}
+
+
+.disclaimer {
+    font-size: 0.85em;
+    color: #707070;
+}
+
+
+/* Results Page */
+.results-area {
+     text-align: left; /* Align results content left */
+     margin-top: 20px;
+}
+
+.results-area h1 {
+    text-align: center; /* Keep heading centered */
+     margin-bottom: 30px;
+}
+
+.markdown-output-controls {
+    display: flex;
+    justify-content: flex-end; /* Align buttons to the right */
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.control-btn {
+    background-color: #4a465a;
+    color: #e0e0e0;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    text-decoration: none; /* For download link */
+}
+
+.control-btn:hover {
+    background-color: #5a566a;
+}
+
+
+.markdown-output-container {
+    background-color: #2a273a;
+    border: 1px solid #3a364a;
+    border-radius: 8px;
+    padding: 20px;
+    max-height: 65vh; /* Limit height and allow scrolling */
+    overflow-y: auto;
+    margin-bottom: 15px; /* Space before info text */
+}
+
+.markdown-output-container pre {
+    white-space: pre-wrap; /* Wrap long lines */
+    word-wrap: break-word; /* Break words if needed */
+    color: #e0e0e0;
+    font-size: 0.95em;
+}
+.markdown-output-container code {
+   font-family: 'Courier New', Courier, monospace; /* Monospace font for code block */
+}
+
+/* Styles for images within markdown */
+.markdown-output-container img {
+    max-width: 100%; /* Ensure images don't overflow */
+    height: auto;
+    display: block; /* Prevent extra space below image */
+    margin-top: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px; /* Optional: slight rounding */
+    background-color: #fff; /* Add white background for transparency */
+}
+
+.info {
+    font-size: 0.85em;
+    color: #888;
+    text-align: center;
+}
+
+/* Flash Messages */
+.flash-messages {
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 20px;
+}
+.flash {
+    padding: 10px 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: #fff;
+    text-align: center;
+}
+.flash.error {
+    background-color: #e53e3e; /* Red */
+}
+.flash.success {
+    background-color: #48bb78; /* Green */
+}
+.flash.info {
+    background-color: #4299e1; /* Blue */
+}
