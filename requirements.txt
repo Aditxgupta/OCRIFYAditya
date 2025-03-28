@@ -1,0 +1,5 @@
+flask==3.0.2
+python-dotenv==1.0.1
+mistralai==0.0.10
+Pillow==10.2.0
+Werkzeug==3.0.1
