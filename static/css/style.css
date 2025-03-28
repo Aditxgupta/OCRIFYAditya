@@ -49,6 +49,16 @@ body, html {
     height: auto;
 }
 
+.logo-text {
+    font-family: Helvetica, Arial, sans-serif;
+    font-weight: bold;
+    font-size: 24px;
+    color: #ffffff; /* Changed from #333 to #ffffff for white */
+    text-decoration: none;
+    margin: 0;
+    padding: 10px;
+}
+
 /* Description */
 .description {
     max-width: 800px;
