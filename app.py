@@ -26,7 +26,9 @@ MAX_CONTENT_LENGTH = 16 * 1024 * 1024 # 16 MB limit
 markdown_storage = {}
 
 # --- Flask App Setup ---
-app = Flask(__name__)
+app = Flask(__name__,
+            template_folder=Path(__file__).parent / 'templates',
+            static_folder=Path(__file__).parent / 'static')
 app.config['SECRET_KEY'] = os.urandom(24) # Needed for flash messages and session
 app.config['MAX_CONTENT_LENGTH'] = MAX_CONTENT_LENGTH
 # app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER # Uncomment if saving files locally
