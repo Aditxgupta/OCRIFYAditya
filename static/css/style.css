@@ -13,13 +13,27 @@ body, html {
     font-size: 14px;
     line-height: 1.6;
 }
+/* Media Query for Mobile */
+@media (max-width: 768px) {
+    body, html {
+        font-size: 12px; /* Smaller font size for smaller screens */
+    }
+}
 
 /* Main Layout */
 .container {
     display: flex;
     height: 100vh;
 }
+.container.sidebar-hidden .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.3s ease-in-out;
+}
+.sidebar-hidden .main-content {
+    width: 100%;
+}
 
+/* Sidebar */
 .sidebar {
     width: 240px;
     background-color: #2a273a; /* Slightly lighter sidebar */
@@ -27,6 +41,34 @@ body, html {
     display: flex;
     flex-direction: column;
     border-right: 1px solid #3a364a;
+}
+
+/* Mobile Specific Styles for Sidebar */
+@media (max-width: 768px), (orientation: portrait) {
+    .sidebar {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 80%; /* Take up 80% of the screen width */
+        height: 100%;
+        z-index: 1000; /* Ensure it's on top of other content */
+        transform: translateX(-100%); /* Hide sidebar off-screen by default */
+        transition: transform 0.3s ease-in-out;
+    }
+
+    .container {
+        flex-direction: column; /* Stack sidebar and content vertically */
+    }
+
+    .sidebar {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #3a364a; /* Add bottom border for separation */
+    }
+
+    .container.sidebar-visible .sidebar {
+        transform: translateX(0); /* Show the sidebar when visible */
+    }
 }
 
 .main-content {
@@ -37,6 +79,13 @@ body, html {
     flex-direction: column;
     align-items: center; /* Center content horizontally */
 }
+@media (max-width: 768px) {
+    .main-content {
+        padding: 20px; /* Reduce padding for smaller screens */
+        align-items: stretch; /* Allow content to stretch */
+    }
+}
+
 
 /* Sidebar Elements */
 .logo {
@@ -57,6 +106,7 @@ body, html {
     text-decoration: none;
     margin: 0;
     padding: 10px;
+    white-space: nowrap; /* Prevent logo text from wrapping */
 }
 
 /* Description */
@@ -76,6 +126,12 @@ body, html {
 .description p:last-child {
     margin-bottom: 0;
 }
+@media (max-width: 768px) {
+    .description {
+        margin-bottom: 20px; /* Reduce margin for mobile */
+    }
+}
+
 
 /* Social Links */
 .social-links {
@@ -108,6 +164,12 @@ body, html {
     color: #7a2ee8;
     transform: translateY(-2px);
 }
+@media (max-width: 768px) {
+    .social-links {
+        padding: 10px 0; /* Reduce padding for mobile */
+        margin-top: 20px; /* Adjust margin for mobile */
+    }
+}
 
 .new-chat-btn { /* Renamed for clarity */
     display: block;
@@ -129,11 +191,21 @@ body, html {
     background-color: #5a566a;
 }
 
+@media (max-width: 768px) {
+    .new-chat-btn {
+        margin-bottom: 10px; /* Reduce margin for mobile */
+    }
+}
+
 /* Main Content Area - Upload Page */
 .upload-area, .results-area {
     width: 100%;
-    max-width: 800px; /* Limit content width */
+    max-width: 1000px; /* Limit content width */
     text-align: center;
+    display: flex; /* Center content vertically */
+    flex-direction: column;
+    align-items: center; /* Center content horizontally */
+    justify-content: center;
     margin-top: 5vh; /* Push down from top a bit */
 }
 
@@ -149,6 +221,13 @@ h1 {
     margin-bottom: 40px;
     font-size: 1.1em;
 }
+
+@media (max-width: 768px) {
+    .subtitle {
+        margin-bottom: 20px; /* Reduce margin for mobile */
+    }
+}
+
 
 /* Placeholder Action Buttons */
 .action-buttons {
@@ -175,6 +254,13 @@ h1 {
     font-size: 1.1em;
 }
 
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column; /* Stack buttons vertically on mobile */
+        align-items: center;
+        gap: 10px; /* Reduce gap for mobile */
+    }
+}
 
 /* Upload Form */
 .upload-form {
@@ -186,7 +272,7 @@ h1 {
 }
 
 .file-input-wrapper {
-    position: relative;
+    position: relative; /* Needed for absolute positioning */
     width: 80%;
     max-width: 400px;
 }
@@ -221,6 +307,13 @@ h1 {
     cursor: pointer;
 }
 
+@media (max-width: 768px) {
+    .file-input-wrapper {
+        width: 100%; /* Full width on mobile */
+        max-width: none; /* Remove max-width on mobile */
+    }
+}
+
 .submit-btn {
     background-color: #8a3ffc; /* Purple accent */
     color: #fff;
@@ -253,13 +346,13 @@ h1 {
 
 /* Results Page */
 .results-area {
-     text-align: left; /* Align results content left */
-     margin-top: 20px;
+    text-align: left; /* Align results content left */
+    margin-top: 20px;
 }
 
 .results-area h1 {
     text-align: center; /* Keep heading centered */
-     margin-bottom: 30px;
+    margin-bottom: 30px;
 }
 
 .markdown-output-controls {
@@ -291,7 +384,7 @@ h1 {
     border: 1px solid #3a364a;
     border-radius: 8px;
     padding: 20px;
-    max-height: 65vh; /* Limit height and allow scrolling */
+    max-height: 70vh; /* Limit height and allow scrolling */
     overflow-y: auto;
     margin-bottom: 15px; /* Space before info text */
 }
@@ -302,6 +395,7 @@ h1 {
     color: #e0e0e0;
     font-size: 0.95em;
 }
+
 .markdown-output-container code {
    font-family: 'Courier New', Courier, monospace; /* Monospace font for code block */
 }
@@ -329,6 +423,7 @@ h1 {
     max-width: 800px;
     margin-bottom: 20px;
 }
+
 .flash {
     padding: 10px 15px;
     margin-bottom: 10px;
@@ -336,12 +431,15 @@ h1 {
     color: #fff;
     text-align: center;
 }
+
 .flash.error {
     background-color: #e53e3e; /* Red */
 }
+
 .flash.success {
     background-color: #48bb78; /* Green */
 }
+
 .flash.info {
     background-color: #4299e1; /* Blue */
 }
