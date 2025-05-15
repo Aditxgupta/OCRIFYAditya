@@ -1,6 +1,6 @@
-flask==3.0.2
-python-dotenv==1.0.1
-mistralai==1.6.0
-Pillow==10.2.0
-markdown==3.5.2
-Werkzeug==3.0.1
+flask==2.3.3
+pyaudio==0.2.13
+SpeechRecognition==3.10.0
+google-generativeai==0.3.1
+wave==0.0.2
+-c constraints.txt
